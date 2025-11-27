@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "ritwickdey.LiveServer",
+        "debugger-for-chrome",
+        "Firefox.vs-code-debugger",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "ms-vscode.js-debug",
+        "firefox-devtools.vscode-firefox-debug"
+    ]
+}

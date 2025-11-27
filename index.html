@@ -16,9 +16,15 @@
         <div class="main-content">
             <!-- Configuration Section -->
             <section class="config-section">
-                <h2>Configuration</h2>
+                <h2>Configuration & Game Window</h2>
                 <div class="config-status">
                     <span id="supabaseStatus" class="status-indicator">⚪ Not Connected</span>
+                    <span id="engineStatus" class="status-indicator">⚪ Idle</span>
+                </div>
+                <div class="input-group">
+                    <button onclick="window.app.openGameWindow()" class="btn btn-primary">🎮 Open Aviator Game</button>
+                    <button onclick="window.app.startAutoCapture()" class="btn btn-secondary">🔴 Start Auto Capture</button>
+                    <button onclick="window.app.stopAutoCapture()" class="btn btn-secondary">⏹ Stop Auto Capture</button>
                 </div>
             </section>
 
@@ -89,7 +95,11 @@
     <!-- Load configuration first, then scripts -->
     <script src="config.js"></script>
     <script src="js/patternMatcher.js"></script>
+    <script src="js/fontDetector.js"></script>
+    <script src="js/screenCapture.js"></script>
+    <script src="js/aviatorEngine.js"></script>
     <script src="js/supabaseLogger.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/quickStart.js"></script>
 </body>
 </html>

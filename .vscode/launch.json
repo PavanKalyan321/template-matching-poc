@@ -1,0 +1,33 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Chrome - Aviator Pattern Matcher",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "sourceMapPathOverrides": {
+                "webpack:///*": "${webRoot}/*"
+            }
+        },
+        {
+            "name": "Firefox - Aviator Pattern Matcher",
+            "type": "firefox",
+            "request": "launch",
+            "url": "http://localhost:8000",
+            "webRoot": "${workspaceFolder}",
+            "pathMapping": {
+                "/": "${workspaceFolder}/",
+                "/js/": "${workspaceFolder}/js/"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug with Chrome",
+            "configurations": ["Chrome - Aviator Pattern Matcher"]
+        }
+    ]
+}

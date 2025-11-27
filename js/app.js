@@ -5,7 +5,8 @@
 
 class AviatorApp {
     constructor() {
-        this.patternMatcher = new PatternMatcher();
+        this.engine = new AviatorEngine();
+        this.patternMatcher = this.engine.patternMatcher;
         this.supabaseLogger = null;
         this.autoLog = true;
         this.enabledPatternTypes = {
@@ -13,6 +14,7 @@ class AviatorApp {
             sequences: true,
             ranges: true
         };
+        this.gameWindow = null;
 
         this.init();
     }
@@ -100,6 +102,87 @@ class AviatorApp {
         document.getElementById('manualLog').addEventListener('click', () => {
             this.logCurrentPatterns();
         });
+
+        // Setup engine event listeners
+        this.setupEngineListeners();
+    }
+
+    /**
+     * Setup AviatorEngine event listeners
+     */
+    setupEngineListeners() {
+        this.engine.on('onValueCaptured', (data) => {
+            this.updateUI();
+            this.showLogMessage(`Value detected: ${data.value.toFixed(2)}x (Confidence: ${(data.confidence * 100).toFixed(1)}%)`, 'success');
+        });
+
+        this.engine.on('onPatternDetected', (data) => {
+            this.updateUI();
+            this.showLogMessage(`${data.patterns.length} pattern(s) detected!`, 'info');
+        });
+
+        this.engine.on('onError', (error) => {
+            this.showLogMessage(`Engine error: ${error}`, 'error');
+        });
+
+        this.engine.on('onStatusChange', (status) => {
+            const statusText = status.status === 'capturing' ? '🔴 Capturing...' : '⚪ Idle';
+            const statusEl = document.getElementById('engineStatus');
+            if (statusEl) {
+                statusEl.textContent = statusText;
+            }
+        });
+    }
+
+    /**
+     * Open game window and initialize engine
+     */
+    async openGameWindow(url = 'https://pin-up.game/') {
+        try {
+            this.gameWindow = window.open(url, 'aviator_game', 'width=1024,height=768,scrollbars=yes');
+
+            if (!this.gameWindow) {
+                this.showLogMessage('Could not open game window. Check popup blocker.', 'error');
+                return false;
+            }
+
+            // Initialize engine with game window
+            const initialized = await this.engine.initialize(this.gameWindow, 'manual');
+
+            if (initialized) {
+                this.showLogMessage('Engine initialized. Ready to capture patterns!', 'success');
+                return true;
+            }
+
+            return false;
+        } catch (error) {
+            this.showLogMessage(`Error opening game window: ${error.message}`, 'error');
+            return false;
+        }
+    }
+
+    /**
+     * Start automatic pattern capture from game
+     */
+    async startAutoCapture() {
+        if (!this.gameWindow || this.gameWindow.closed) {
+            this.showLogMessage('Game window not open. Open it first!', 'error');
+            return false;
+        }
+
+        const success = await this.engine.startAutoCapture();
+        if (success) {
+            this.showLogMessage('Auto-capture started! Analyzing game values...', 'success');
+        }
+        return success;
+    }
+
+    /**
+     * Stop automatic capture
+     */
+    stopAutoCapture() {
+        this.engine.stopAutoCapture();
+        this.showLogMessage('Auto-capture stopped.', 'info');
     }
 
     addSingleValue() {
@@ -112,7 +195,8 @@ class AviatorApp {
         }
 
         try {
-            this.patternMatcher.addValue(value);
+            // Use engine instead of patternMatcher directly
+            this.engine.addValue(value, 1.0);
             input.value = '';
             this.updateUI();
 
@@ -149,7 +233,8 @@ class AviatorApp {
         }
 
         try {
-            this.patternMatcher.addBulkValues(values);
+            // Use engine instead of patternMatcher directly
+            this.engine.addBulkValues(values);
             input.value = '';
             this.updateUI();
             this.showLogMessage(`Added ${values.length} values`, 'success');
@@ -165,7 +250,7 @@ class AviatorApp {
 
     clearHistory() {
         if (confirm('Are you sure you want to clear all data?')) {
-            this.patternMatcher.clear();
+            this.engine.clear();
             this.updateUI();
             this.showLogMessage('History cleared', 'info');
         }
@@ -195,10 +280,10 @@ class AviatorApp {
 
     updateValuesDisplay() {
         const container = document.getElementById('recentValues');
-        const recentValues = this.patternMatcher.getRecentValues(20);
+        const recentValues = this.engine.getRecentValues(20);
 
         if (recentValues.length === 0) {
-            container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No values yet. Add some crash values to start.</p>';
+            container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No values yet. Add some crash values to start or open a game window.</p>';
             return;
         }
 
@@ -212,9 +297,9 @@ class AviatorApp {
     }
 
     updateStats() {
-        const stats = this.patternMatcher.getStats();
-        document.getElementById('totalCount').textContent = stats.count;
-        document.getElementById('avgValue').textContent = stats.average.toFixed(2);
+        const analysis = this.engine.analyzeSequence();
+        document.getElementById('totalCount').textContent = analysis.totalValues;
+        document.getElementById('avgValue').textContent = analysis.average.toFixed(2);
     }
 
     updatePatternDisplay() {
