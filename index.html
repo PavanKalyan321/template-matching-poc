@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviator X - Pattern Matcher</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 Aviator X Pattern Matcher</h1>
+            <p class="subtitle">Real-time crash game pattern analysis</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Configuration Section -->
+            <section class="config-section">
+                <h2>Configuration</h2>
+                <div class="config-status">
+                    <span id="supabaseStatus" class="status-indicator">⚪ Not Connected</span>
+                </div>
+            </section>
+
+            <!-- Input Section -->
+            <section class="input-section">
+                <h2>Game Data Input</h2>
+                <div class="input-group">
+                    <label for="crashValue">Enter Crash Value (e.g., 1.50x):</label>
+                    <input type="number" id="crashValue" step="0.01" min="0" placeholder="1.50">
+                    <button id="addValue" class="btn btn-primary">Add Value</button>
+                </div>
+                <div class="input-group">
+                    <label for="bulkInput">Bulk Input (comma-separated):</label>
+                    <textarea id="bulkInput" rows="3" placeholder="1.50, 2.30, 1.10, 5.20, 1.80"></textarea>
+                    <button id="addBulk" class="btn btn-secondary">Add Bulk Values</button>
+                </div>
+                <button id="clearHistory" class="btn btn-danger">Clear History</button>
+            </section>
+
+            <!-- Current Data Section -->
+            <section class="data-section">
+                <h2>Recent Crash Values</h2>
+                <div id="recentValues" class="values-display"></div>
+                <div class="stats">
+                    <p>Total Values: <span id="totalCount">0</span></p>
+                    <p>Average: <span id="avgValue">0.00</span>x</p>
+                </div>
+            </section>
+
+            <!-- Pattern Detection Section -->
+            <section class="patterns-section">
+                <h2>Detected Patterns</h2>
+                <div class="pattern-controls">
+                    <label>
+                        <input type="checkbox" id="enableStreaks" checked>
+                        Detect Streaks (consecutive high/low)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enableSequences" checked>
+                        Detect Sequences (repeating patterns)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="enableRanges" checked>
+                        Detect Range Patterns
+                    </label>
+                </div>
+
+                <div id="patternsDisplay" class="patterns-display">
+                    <p class="no-patterns">No patterns detected yet. Add more values to start analyzing.</p>
+                </div>
+            </section>
+
+            <!-- Supabase Logging Section -->
+            <section class="logging-section">
+                <h2>Supabase Logging</h2>
+                <div class="logging-controls">
+                    <label>
+                        <input type="checkbox" id="autoLog" checked>
+                        Auto-log detected patterns
+                    </label>
+                    <button id="manualLog" class="btn btn-primary">Log Current Patterns</button>
+                </div>
+                <div id="logStatus" class="log-status"></div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Load configuration first, then scripts -->
+    <script src="config.js"></script>
+    <script src="js/patternMatcher.js"></script>
+    <script src="js/supabaseLogger.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

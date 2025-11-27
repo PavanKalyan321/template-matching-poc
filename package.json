@@ -1,0 +1,17 @@
+{
+  "name": "aviator-pattern-matcher",
+  "version": "1.0.0",
+  "description": "Pattern matching system for Aviator X crash game analysis with Supabase logging",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 8080"
+  },
+  "keywords": [
+    "aviator",
+    "pattern-matching",
+    "crash-game",
+    "supabase"
+  ],
+  "author": "",
+  "license": "MIT"
+}
